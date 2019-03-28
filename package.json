@@ -1,0 +1,17 @@
+{
+  "name": "gulp-sofa-module",
+  "version": "1.0.0",
+  "description": "simplified adding CSS and JS from modules to HTML pages using Gulp",
+  "main": "index.js",
+  "repository": "https://github.com/roovwhite/sofa.git",
+  "author": "roovwhite",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^4.0.0",
+    "gulp-sass": "^4.0.2"
+  },
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "through2": "^3.0.1"
+  }
+}

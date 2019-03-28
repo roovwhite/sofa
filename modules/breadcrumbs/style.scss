@@ -1,0 +1,32 @@
+.breadcrumbs {
+    width: 100%;
+    font-size: 12px;
+    cursor: default;
+    &__item {
+        display: inline-block;
+        position: relative;
+        margin-right: 15px;
+        vertical-align: middle;
+        cursor: pointer;
+        &:last-child {
+            margin: 0;
+            &:after {
+                content: none;
+            }
+        }
+        &:after {
+            content: '>';
+            position: absolute;
+            top: 50%;
+            right: -10px;
+            font-size: 7px;
+            color: #ccc;
+            cursor: default;
+            transform: translateY(-50%);
+        }
+    }
+    &__current {
+        color: #ccc;
+        cursor: default;
+    }
+}
