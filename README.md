@@ -18,6 +18,9 @@ simplified adding CSS and JS from modules to HTML pages using Gulp
 ```
 **gulp:**
 ```
+const gulp = require('gulp');
+const sofa = require('gulp-sofa-module');
+
 function htmlBuild() {
     return gulp.src(path.to.html)
         .pipe(/* Any plugins */)
