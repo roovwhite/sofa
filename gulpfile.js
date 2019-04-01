@@ -1,6 +1,7 @@
 const gulp = require('gulp');
 const sass = require('gulp-sass');
 const sofa = require('./index');
+const dest = require('gulp-dest');
 
 let config = {
     build: {
@@ -18,8 +19,9 @@ let config = {
 
 function htmlBuild() {
     return gulp.src(config.src.html)
-        .pipe(sofa({path:'./modules'}))
-        .pipe(gulp.dest(config.build.html))
+        .pipe(sofa({path: './modules', onePlace: true}))
+        .pipe(dest(':name/:name.html')) // put html file in finename_dir
+        .pipe(gulp.dest('.'))
 }
 
 function cssBuild() {

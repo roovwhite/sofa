@@ -2,6 +2,7 @@
 simplified adding CSS and JS from modules to HTML pages using Gulp
 
 **Structure:**
+
 ```
 |_modules
 |       |_breadcrumbs
@@ -16,7 +17,9 @@ simplified adding CSS and JS from modules to HTML pages using Gulp
 |
 |_index.html
 ```
+
 **gulp:**
+
 ```
 const gulp = require('gulp');
 const sofa = require('gulp-sofa-module');
@@ -28,7 +31,15 @@ function htmlBuild() {
         .pipe(gulp.dest(config.build.html))
 }
 ```
+_path_ _{String}_ - directory path
+
+_onePlace_: _{Boolean}_ - put all the module files in one directory with the name of the page. By default "false"
+(styles - presently only *.scss)
+
+_jsSourceMap_: _{Boolean}_ - include inline sourcemap in js file. By default "false".
+
 **index.html**
+
 ```
 <!DOCTYPE html>
 <html lang="en">
@@ -42,7 +53,9 @@ function htmlBuild() {
 </body>
 </html>
 ```
+
 **index.html (transformed)**
+
 ```
 <html lang="en">
 <head>
@@ -70,3 +83,9 @@ function htmlBuild() {
 </body>
 </html>
 ```
+
+**Options**
+
+_"module"_ _{String}_ directory name (or folder path)
+
+_"extra"_: _{Object}_ - names of additional files

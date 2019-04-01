@@ -1,6 +1,7 @@
 .idea
 node_modules/
 build/
+example/
 .DS_Store
 .npm
 npm-debug.log*
