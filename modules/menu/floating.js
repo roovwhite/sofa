@@ -3,6 +3,13 @@ function floating(data, callback) {
     callback();
 }
 
+/**
+ * @example
+ * for example
+ */
+
+// line comment
+
 function init() {
     floating('Float!', () => {
         console.log('floating finished');

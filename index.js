@@ -5,6 +5,8 @@ const through = require('through2').obj;
 const rgx = /@sofa:(.*?);/g;
 const concat = require('concat');
 
+const preserveImportant = comment => /licen[sc]e|copyright|@preserve|^!/i.test(comment);
+
 let html = 'template.html';
 let style = 'style.scss';
 let jsInsert = '<script type="text/javascript" src="%s"></script>';
@@ -28,6 +30,7 @@ function jsMinify(doc, filename, jsSourceMap) {
             '@babel/preset-env',
             ['minify']
         ],
+        comments: false,
         sourceMaps: sourcemap,
     });
 }
