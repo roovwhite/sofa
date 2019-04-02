@@ -35,27 +35,38 @@ function jsMinify(doc, filename, jsSourceMap) {
 function concatFiles(dirName, pathArray, jsSourceMap) {
     let extension = pathArray[0].split('.').pop() === 'js' ? 'js' : 'css';
     let filename = extension === 'js' ? 'main.js' : 'style.css';
+    let jsFile;
+    let jsString = '';
 
     if (!fs.existsSync(dirName)) {
         fs.mkdirSync(dirName);
     }
 
-    concat(pathArray)
-        .then( result => {
-            if (extension === 'css') {
-                result = sassConvert(result);
-            }
-
-            if (extension === 'js') {
-                result = jsMinify(result, dirName, jsSourceMap)['code'];
-            }
-
-            fs.writeFileSync(`${dirName}/${filename}`, result, err => {
-                if (err) {
-                    return console.error(err);
-                }
-            });
+    if (extension === 'js') {
+        pathArray.forEach( itemPath => {
+            jsFile = fs.readFileSync(itemPath, 'utf8');
+            jsString += `(function(){${jsFile}}());`;
         });
+
+        jsString = jsMinify(jsString, dirName, jsSourceMap)['code'];
+
+        fs.writeFileSync(`${dirName}/${filename}`, jsString, err => {
+            if (err) {
+                return console.error(err);
+            }
+        });
+    }
+
+    if (extension === 'css') {
+        concat(pathArray)
+            .then( result => {
+                fs.writeFileSync(`${dirName}/${filename}`, sassConvert(result), err => {
+                    if (err) {
+                        return console.error(err);
+                    }
+                });
+            });
+    }
 }
 
 function templateEngine(file, options) {
@@ -82,7 +93,7 @@ function templateEngine(file, options) {
         let modulePath = `${options['path']}/${includes[index]['module']}`;
         let extra = includes[index]['extra'];
 
-        if (options['excludeTemplate']) {
+        if (includes[index]['excludeTemplate']) {
             template = '';
         } else {
             template = fs.readFileSync(`${modulePath}/${html}`, 'utf8');
@@ -90,30 +101,28 @@ function templateEngine(file, options) {
 
         modifiedFile = modifiedFile.replace(item, template);
 
-        if (fs.existsSync(`${modulePath}/${style}`)) {
-            let currentPath = `${modulePath}/style.css`;
-            cssFilesPath += `${styleInsert.replace(/%s/g, currentPath)}\n`;
-        }
-
         if (options['onePlace']) {
 
             if (extra && extra['js']) {
                 extra['js'].forEach( jsItem => {
                     jsFilesPathArr.push(`${modulePath}/${jsItem}.js`);
                 });
-                concatFiles(filename, jsFilesPathArr, options.jsSourceMap);
-                jsFilesPath = `${jsInsert.replace(/%s/g, './main.js')}`;
             }
 
+            cssFilesPathArr.push(`${modulePath}/${style}`);
+
             if (extra && extra['css']) {
-                extra['css'].push('style');
                 extra['css'].forEach( cssItem => {
-                    cssFilesPathArr.unshift(`${modulePath}/${cssItem}.scss`);
+                    cssFilesPathArr.push(`${modulePath}/${cssItem}.scss`);
                 });
-                concatFiles(filename, cssFilesPathArr);
-                cssFilesPath = `${styleInsert.replace(/%s/g, `./style.css`)}`;
             }
         } else {
+
+            if (fs.existsSync(`${modulePath}/${style}`)) {
+                let currentPath = `${modulePath}/style.css`;
+                cssFilesPath += `${styleInsert.replace(/%s/g, currentPath)}\n`;
+            }
+
             if (extra && extra['js']) {
                 extra['js'].forEach( jsItem => {
                     jsFilesPath += `${jsInsert.replace(/%s/g, `${modulePath}/${jsItem}.js`)}\n`;
@@ -127,6 +136,16 @@ function templateEngine(file, options) {
             }
         }
     });
+
+    if (options['onePlace'] && jsFilesPathArr.length) {
+        concatFiles(filename, jsFilesPathArr, options.jsSourceMap);
+        jsFilesPath = `${jsInsert.replace(/%s/g, './main.js')}`;
+    }
+
+    if (options['onePlace'] && cssFilesPathArr.length) {
+        concatFiles(filename, cssFilesPathArr);
+        cssFilesPath = `${styleInsert.replace(/%s/g, `./style.css`)}`;
+    }
 
     modifiedFile = insertBeforeLastOccurrence(modifiedFile, '</body>', `${cssFilesPath}\n${jsFilesPath}\n`);
 

@@ -7,7 +7,7 @@ function init() {
     popup('Pop!', () => {
         console.log('popup finished');
     });
-    console.log('Init');
+    console.log('Init popup');
 }
 
 init();
