@@ -82,7 +82,12 @@ function templateEngine(file, options) {
         let modulePath = `${options['path']}/${includes[index]['module']}`;
         let extra = includes[index]['extra'];
 
-        template = fs.readFileSync(`${modulePath}/${html}`, 'utf8');
+        if (options['excludeTemplate']) {
+            template = '';
+        } else {
+            template = fs.readFileSync(`${modulePath}/${html}`, 'utf8');
+        }
+
         modifiedFile = modifiedFile.replace(item, template);
 
         if (fs.existsSync(`${modulePath}/${style}`)) {

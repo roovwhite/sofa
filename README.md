@@ -38,6 +38,8 @@ _onePlace_: _{Boolean}_ - put all the module files in one directory with the nam
 
 _jsSourceMap_: _{Boolean}_ - include inline sourcemap in js file. By default "false".
 
+_excludeTemplate_: _{Boolean}_ - exclude html templates from processing. By default "false".
+
 **index.html**
 
 ```
