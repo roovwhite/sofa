@@ -1,7 +1,10 @@
 const fs = require('fs');
 const sass = require('sass');
-const transform = require("@babel/core").transformSync;
+const postcss = require('postcss');
 const through = require('through2').obj;
+const transform = require("@babel/core").transformSync;
+const autoprefixer = require('autoprefixer');
+
 const rgx = /@sofa:(.*?);/g;
 const concat = require('concat');
 
@@ -19,7 +22,7 @@ function insertBeforeLastOccurrence(stringToSearch, stringToFind, stringToInsert
 }
 
 function sassConvert(doc) {
-    return (sass.renderSync({data: doc, outputStyle: 'compressed'}))['css'].toString();
+    return (sass.renderSync({data: doc, outputStyle: 'expanded'}))['css'].toString(); //expanded, compressed
 }
 
 function jsMinify(doc, filename, jsSourceMap) {
@@ -63,10 +66,18 @@ function concatFiles(dirName, pathArray, jsSourceMap) {
     if (extension === 'css') {
         concat(pathArray)
             .then( result => {
-                fs.writeFileSync(`${dirName}/${filename}`, sassConvert(result), err => {
-                    if (err) {
-                        return console.error(err);
-                    }
+                let css = sassConvert(result);
+
+                postcss([ autoprefixer ]).process(css, {from: 'undefined'}).then(function (cssResult) {
+                    cssResult.warnings().forEach(function (warn) {
+                        console.warn(warn.toString());
+                    });
+
+                    fs.writeFileSync(`${dirName}/${filename}`, cssResult.css, err => {
+                        if (err) {
+                            return console.error(err);
+                        }
+                    });
                 });
             });
     }
