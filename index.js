@@ -4,11 +4,8 @@ const postcss = require('postcss');
 const through = require('through2').obj;
 const transform = require("@babel/core").transformSync;
 const autoprefixer = require('autoprefixer');
-
-const rgx = /@sofa:(.*?);/g;
 const concat = require('concat');
-
-const preserveImportant = comment => /licen[sc]e|copyright|@preserve|^!/i.test(comment);
+const rgx = /@sofa:(.*?);/g;
 
 let html = 'template.html';
 let style = 'style.scss';
@@ -25,7 +22,7 @@ function sassConvert(doc) {
     return (sass.renderSync({data: doc, outputStyle: 'expanded'}))['css'].toString(); //expanded, compressed
 }
 
-function jsMinify(doc, filename, jsSourceMap) {
+function jsMinify(doc, jsSourceMap) {
     let sourcemap = jsSourceMap ? 'inline' : false;
 
     return transform(doc, {
@@ -50,11 +47,11 @@ function concatFiles(dirName, pathArray, jsSourceMap) {
 
     if (extension === 'js') {
         pathArray.forEach( itemPath => {
-            jsFile = fs.readFileSync(itemPath, 'utf8');
+            jsFile = fs.existsSync(itemPath) && fs.readFileSync(itemPath, 'utf8');
             jsString += `(function(){${jsFile}}());`;
         });
 
-        jsString = jsMinify(jsString, dirName, jsSourceMap)['code'];
+        jsString = jsMinify(jsString, jsSourceMap)['code'];
 
         fs.writeFileSync(`${dirName}/${filename}`, jsString, err => {
             if (err) {
@@ -93,6 +90,7 @@ function templateEngine(file, options) {
     let jsFilesPath = '';
     let cssFilesPathArr = [];
     let jsFilesPathArr = [];
+    let destination = options.dest ? `${options.dest}${filename}` : filename;
 
     /**
      * Get {Object} parameters
@@ -152,12 +150,12 @@ function templateEngine(file, options) {
     });
 
     if (options['onePlace'] && jsFilesPathArr.length) {
-        concatFiles(filename, jsFilesPathArr, options.jsSourceMap);
+        concatFiles(destination, jsFilesPathArr, options.jsSourceMap);
         jsFilesPath = `${jsInsert.replace(/%s/g, './main.js')}`;
     }
 
     if (options['onePlace'] && cssFilesPathArr.length) {
-        concatFiles(filename, cssFilesPathArr);
+        concatFiles(destination, cssFilesPathArr);
         cssFilesPath = `${styleInsert.replace(/%s/g, `./style.css`)}`;
     }
 

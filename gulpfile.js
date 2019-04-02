@@ -21,7 +21,6 @@ function htmlBuild() {
     return gulp.src(config.src.html)
         .pipe(sofa({path: './modules', onePlace: true}))
         .pipe(dest(':name/:name.html')) // (onePlace) put html file in finename_dir
-        //.pipe(gulp.dest(config.build.html)) // as is
         .pipe(gulp.dest('.')) // (onePlace)
 }
 
