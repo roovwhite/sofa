@@ -159,7 +159,7 @@ function templateEngine(file, options) {
         cssFilesPath = `${styleInsert.replace(/%s/g, `./style.css`)}`;
     }
 
-    modifiedFile = insertBeforeLastOccurrence(modifiedFile, '</body>', `${cssFilesPath}\n${jsFilesPath}\n`);
+    modifiedFile = insertBeforeLastOccurrence(modifiedFile, options['insertPlace'], `${cssFilesPath}\n${jsFilesPath}\n`);
 
     return modifiedFile;
 }

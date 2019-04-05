@@ -31,14 +31,21 @@ function htmlBuild() {
         .pipe(gulp.dest(config.build.html))
 }
 ```
+/ *required fields* /
+
 _path_ _{String}_ - directory path
+
+_insert_ _{String}_ - label before which links to files (js, css) will be established
+(example: '\</body>')
+
+/ *optional fields* /
 
 _onePlace_ _{Boolean}_ - put all the module files in one directory with the name of the page. By default "false"
 (styles - presently only *.scss)
 
 _jsSourceMap_ _{Boolean}_ - include inline sourcemap in js file. By default "false".
 
-_dest_ _{String}_ - destination folder (must match the gulp.dest)
+_dest_ _{String}_ - destination folder (must match the gulp.dest). For "onePlace".
 
 **index.html**
 
