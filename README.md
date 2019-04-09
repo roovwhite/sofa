@@ -35,8 +35,10 @@ function htmlBuild() {
 
 _path_ _{String}_ - directory path
 
-_insert_ _{String}_ - label before which links to files (js, css) will be established
+_insertPlace_ _{String}_ - label before which links to files (js, css) will be established
 (example: '\</body>')
+
+_insert_ _{Object}_ - tags, before which links (separately for js and css) to files will be set (example: "insert":{"js":"<\!--forJS"-->", "css":"<\!--forCSS"-->"})
 
 / *optional fields* /
 
