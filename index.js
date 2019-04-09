@@ -18,8 +18,12 @@ function insertBeforeLastOccurrence(stringToSearch, stringToFind, stringToInsert
     return stringToSearch.substring(0, n) + stringToInsert + stringToSearch.substring(n);
 }
 
-function sassConvert(doc) {
-    return (sass.renderSync({data: doc, outputStyle: 'expanded'}))['css'].toString(); //expanded, compressed
+function sassConvert(doc, rootPath) {
+    return (sass.renderSync({
+        data: doc,
+        includePaths: [`${rootPath}`],
+        outputStyle: 'expanded'
+    }))['css'].toString(); //expanded, compressed
 }
 
 function jsMinify(doc, jsSourceMap) {
@@ -35,7 +39,7 @@ function jsMinify(doc, jsSourceMap) {
     });
 }
 
-function concatFiles(dirName, pathArray, jsSourceMap) {
+function concatFiles(dirName, pathArray, jsSourceMap, rootPath) {
     let extension = pathArray[0].split('.').pop() === 'js' ? 'js' : 'css';
     let filename = extension === 'js' ? 'main.js' : 'style.css';
     let jsFile;
@@ -63,7 +67,7 @@ function concatFiles(dirName, pathArray, jsSourceMap) {
     if (extension === 'css') {
         concat(pathArray)
             .then( result => {
-                let css = sassConvert(result);
+                let css = sassConvert(result, rootPath);
 
                 postcss([ autoprefixer ]).process(css, {from: 'undefined'}).then(function (cssResult) {
                     cssResult.warnings().forEach(function (warn) {
@@ -102,7 +106,7 @@ function templateEngine(file, options) {
     });
 
     array.forEach( (item, index) => {
-        let modulePath = `${options['path']}/${includes[index]['module']}`;
+        let modulePath = `${options.path}/${includes[index]['module']}`;
         let extra = includes[index]['extra'];
 
         if (includes[index]['excludeTemplate']) {
@@ -113,7 +117,7 @@ function templateEngine(file, options) {
 
         modifiedFile = modifiedFile.replace(item, template);
 
-        if (options['onePlace']) {
+        if (options.onePlace) {
 
             if (extra && extra['js']) {
                 extra['js'].forEach( jsItem => {
@@ -149,17 +153,17 @@ function templateEngine(file, options) {
         }
     });
 
-    if (options['onePlace'] && jsFilesPathArr.length) {
+    if (options.onePlace && jsFilesPathArr.length) {
         concatFiles(destination, jsFilesPathArr, options.jsSourceMap);
         jsFilesPath = `${jsInsert.replace(/%s/g, './main.js')}`;
     }
 
-    if (options['onePlace'] && cssFilesPathArr.length) {
-        concatFiles(destination, cssFilesPathArr);
+    if (options.onePlace && cssFilesPathArr.length) {
+        concatFiles(destination, cssFilesPathArr, null, options.path);
         cssFilesPath = `${styleInsert.replace(/%s/g, `./style.css`)}`;
     }
 
-    modifiedFile = insertBeforeLastOccurrence(modifiedFile, options['insertPlace'], `${cssFilesPath}\n${jsFilesPath}\n`);
+    modifiedFile = insertBeforeLastOccurrence(modifiedFile, options.insertPlace, `${cssFilesPath}\n${jsFilesPath}\n`);
 
     return modifiedFile;
 }
