@@ -101,4 +101,4 @@ _"module"_ _{String}_ directory name (or folder path)
 
 _"extra"_: _{Object}_ - names of additional files
 
-_excludeTemplate_: _{Boolean}_ - exclude html templates from processing. By default "false".
+_noTemplate_: _{Boolean}_ - exclude html templates from processing. By default "false".

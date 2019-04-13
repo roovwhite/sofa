@@ -109,7 +109,7 @@ function templateEngine(file, options) {
         let modulePath = `${options.path}/${includes[index]['module']}`;
         let extra = includes[index]['extra'];
 
-        if (includes[index]['excludeTemplate']) {
+        if (includes[index]['noTemplate']) {
             template = '';
         } else {
             template = fs.readFileSync(`${modulePath}/${html}`, 'utf8');
