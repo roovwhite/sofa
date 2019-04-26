@@ -45,6 +45,8 @@ _insert_ _{Object}_ - tags, before which links (separately for js and css) to fi
 _onePlace_ _{Boolean}_ - put all the module files in one directory with the name of the page. By default "false"
 (styles - presently only *.scss)
 
+_compress_ _{Boolean}_ - compress files. By default "true".
+
 _jsSourceMap_ _{Boolean}_ - include inline sourcemap in js file. By default "false".
 
 _dest_ _{String}_ - destination folder (must match the gulp.dest). For "onePlace".

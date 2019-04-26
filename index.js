@@ -18,11 +18,14 @@ function insertBeforeLastOccurrence(stringToSearch, stringToFind, stringToInsert
     return stringToSearch.substring(0, n) + stringToInsert + stringToSearch.substring(n);
 }
 
-function sassConvert(doc, rootPath) {
+function sassConvert(doc, options) {
+
+    console.log(options);
+
     return (sass.renderSync({
         data: doc,
-        includePaths: [`${rootPath}`],
-        outputStyle: 'expanded'
+        includePaths: [`${options.path}`],
+        outputStyle: options.compress !== false ? 'compressed' : 'expanded'
     }))['css'].toString(); //expanded, compressed
 }
 
@@ -39,7 +42,7 @@ function jsMinify(doc, jsSourceMap) {
     });
 }
 
-function concatFiles(dirName, pathArray, jsSourceMap, rootPath) {
+function concatFiles(dirName, pathArray, jsSourceMap, options) {
     let extension = pathArray[0].split('.').pop() === 'js' ? 'js' : 'css';
     let filename = extension === 'js' ? 'main.js' : 'style.css';
     let jsFile;
@@ -67,7 +70,7 @@ function concatFiles(dirName, pathArray, jsSourceMap, rootPath) {
     if (extension === 'css') {
         concat(pathArray)
             .then( result => {
-                let css = sassConvert(result, rootPath);
+                let css = sassConvert(result, options);
 
                 postcss([ autoprefixer ]).process(css, {from: 'undefined'}).then(function (cssResult) {
                     cssResult.warnings().forEach(function (warn) {
@@ -159,7 +162,7 @@ function templateEngine(file, options) {
     }
 
     if (options.onePlace && cssFilesPathArr.length) {
-        concatFiles(destination, cssFilesPathArr, null, options.path);
+        concatFiles(destination, cssFilesPathArr, null, options);
         cssFilesPath = `${styleInsert.replace(/%s/g, `./style.css`)}`;
     }
 
