@@ -99,6 +99,8 @@ function templateEngine(file, options) {
     let jsFilesPathArr = [];
     let destination = options.dest ? `${options.dest}${filename}` : filename;
 
+    if (!array || !array.length) return;
+
     /**
      * Get {Object} parameters
      */
@@ -180,6 +182,8 @@ module.exports = options => {
 
     return through( (file, encoding, callback) => {
         let fileModify = templateEngine(file, options);
+
+        if (!fileModify) return;
 
         file.contents = Buffer.from(fileModify);
 
