@@ -19,7 +19,7 @@ let config = {
 
 function htmlBuild() {
     return gulp.src(config.src.html)
-        .pipe(sofa({path: './modules', onePlace: true}))
+        .pipe(sofa({path: './modules', inserts: {'js': '<!--forJS-->', css: '<!--forCSS-->'}}))
         .pipe(dest(':name/:name.html')) // (onePlace) put html file in finename_dir
         .pipe(gulp.dest('.')) // (onePlace)
 }

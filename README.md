@@ -4,18 +4,19 @@ simplified adding CSS and JS from modules to HTML pages using Gulp
 **Structure:**
 
 ```
-|_modules
-|       |_breadcrumbs
-|       |           |_popup.js
-|       |           |_style.scss
-|       |           |_template.html
-|       |           |_yellow-line.scss
-|       |_menu
-|             |_floating.js
-|             |_style.scss
-|             |_template.html
+/
+|- modules/
+|       |- breadcrumbs/
+|       |               |- popup.js
+|       |               |- style.scss
+|       |               |- template.html
+|       |               |- yellow-line.scss
+|       |- menu/
+|               |- floating.js
+|               |- style.scss
+|               |- template.html
 |
-|_index.html
+|- example.html
 ```
 
 **gulp:**
@@ -27,27 +28,32 @@ const sofa = require('gulp-sofa-module');
 function htmlBuild() {
     return gulp.src(path.to.html)
         .pipe(/* Any plugins */)
-        .pipe(sofa({path:'./modules'}))
-        .pipe(gulp.dest(config.build.html))
+        .pipe(sofa({path:'./modules', insert:{'js': '<!--forJS-->', css: '<!--forCSS-->'}}))
+        .pipe(gulp.dest(path.build))
 }
 ```
-/ *required fields* /
+**Options for gulp**
 
-_path_ _{String}_ - directory path
+/ **_required fields_** /
 
-_insertPlace_ _{String}_ - label before which links to files (js, css) will be established
-(example: '\</body>')
+_path_ _{String}_ - path to the directory with modules
 
-_insert_ _{Object}_ - tags, before which links (separately for js and css) to files will be set (example: "insert":{"js":"<\!--forJS"-->", "css":"<\!--forCSS"-->"})
+/ **_optional fields_** /
 
-/ *optional fields* /
+_insertPlace_ _{String}_ - tag before which links to files (js, css) will be established
+( example: `sofa({insertPlace: '</body>'})` )
+**(if not specified, default is insert before the '<\/head>')**
 
-_onePlace_ _{Boolean}_ - put all the module files in one directory with the name of the page. By default "false"
-(styles - presently only *.scss)
+_inserts_ _{Object}_ - tags, before which links (separately for js and css) to files
+will be set ( example: `sofa({inserts: {'js': '<!--forJS-->', css: '<!--forCSS-->'}` )
+**(if not specified, default is insert before the '<\/head>')**
 
 _compress_ _{Boolean}_ - compress files. By default "true".
 
 _jsSourceMap_ _{Boolean}_ - include inline sourcemap in js file. By default "false".
+
+_onePlace_ _{Boolean}_ - put all the module files in one directory with the name of the page.
+By default "false" (**styles - currently only * .scss is supported**) **!required _'dest'_ option**
 
 _dest_ _{String}_ - destination folder (must match the gulp.dest). For "onePlace".
 
@@ -59,13 +65,25 @@ _dest_ _{String}_ - destination folder (must match the gulp.dest). For "onePlace
 <head>
     <meta charset="UTF-8">
     <title>Sofa</title>
+    <!--forCSS-->
 </head>
 <body>
-@sofa:{"module":"menu"};
+@sofa:{"module":"menu", "extra":{"js":["floating"]}, "anotherTemplate": "another"};
 @sofa:{"module":"breadcrumbs", "extra":{"js":["popup"],"css":["yellow-line"]}};
+
+<!--forJS-->
 </body>
 </html>
 ```
+**Options for html**
+
+_"module"_ _{String}_ directory name (or folder path)
+
+_"extra"_: _{Object}_ - names of additional files
+
+_noTemplate_: _{Boolean}_ - exclude html templates from processing. By default "false"
+
+_anotherTemplate_: _{String}_ - html template name instead of default template.
 
 **index.html (transformed)**
 
@@ -74,13 +92,16 @@ _dest_ _{String}_ - destination folder (must match the gulp.dest). For "onePlace
 <head>
     <meta charset="UTF-8">
     <title>Sofa</title>
+    <link type="text/css" rel="stylesheet" href="./modules/menu/style.css">
+    <link type="text/css" rel="stylesheet" href="./modules/breadcrumbs/style.css">
+    <link type="text/css" rel="stylesheet" href="./modules/breadcrumbs/yellow-line.css">
 </head>
 <body>
 <ul class="menu">
-    <li class="menu__item">Menu:</li>
-    <li class="menu__item"><a href="#">About</a></li>
-    <li class="menu__item"><a href="#">One page</a></li>
-    <li class="menu__item menu__current">Two page</li>
+    <li class="menu__item">Menu another:</li>
+    <li class="menu__item"><a href="#">About Us</a></li>
+    <li class="menu__item"><a href="#">Red page</a></li>
+    <li class="menu__item menu__current">Blue page</li>
 </ul>
 <ul class="breadcrumbs">
     <li class="breadcrumbs__item"><a href="#">Home</a></li>
@@ -88,19 +109,7 @@ _dest_ _{String}_ - destination folder (must match the gulp.dest). For "onePlace
     <li class="breadcrumbs__item breadcrumbs__current breadcrumbs_yellow">Subgroup</li>
 </ul>
 
-<link type="text/css" rel="stylesheet" href="./modules/menu/style.css">
-<link type="text/css" rel="stylesheet" href="./modules/breadcrumbs/style.css">
-<link type="text/css" rel="stylesheet" href="./modules/breadcrumbs/yellow-line.css">
-
 <script type="text/javascript" src="./modules/breadcrumbs/popup.js"></script>
 </body>
 </html>
 ```
-
-**Options**
-
-_"module"_ _{String}_ directory name (or folder path)
-
-_"extra"_: _{Object}_ - names of additional files
-
-_noTemplate_: _{Boolean}_ - exclude html templates from processing. By default "false".

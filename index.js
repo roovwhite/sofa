@@ -12,15 +12,18 @@ let style = 'style.scss';
 let jsInsert = '<script type="text/javascript" src="%s"></script>';
 let styleInsert = '<link type="text/css" rel="stylesheet" href="%s">';
 
-function insertBeforeLastOccurrence(stringToSearch, stringToFind, stringToInsert) {
+function insertBeforeLastOccurrence(stringToSearch, stringToFind, stringToInsert, clearTag) {
     let n = stringToSearch.lastIndexOf(stringToFind);
     if (n < 0) return stringToSearch;
+
+    if (clearTag) {
+        stringToSearch = stringToSearch.replace(stringToFind, '');
+    }
+
     return stringToSearch.substring(0, n) + stringToInsert + stringToSearch.substring(n);
 }
 
 function sassConvert(doc, options) {
-
-    console.log(options);
 
     return (sass.renderSync({
         data: doc,
@@ -29,20 +32,22 @@ function sassConvert(doc, options) {
     }))['css'].toString(); //expanded, compressed
 }
 
-function jsMinify(doc, jsSourceMap) {
-    let sourcemap = jsSourceMap ? 'inline' : false;
+function jsMinify(doc, options) {
+
+    let sourcemap = options.jsSourceMap ? 'inline' : false;
+    let compressed = options.compress !== false ? 'minify' : '';
 
     return transform(doc, {
         presets: [
             '@babel/preset-env',
-            ['minify']
+            [compressed]
         ],
         comments: false,
         sourceMaps: sourcemap,
     });
 }
 
-function concatFiles(dirName, pathArray, jsSourceMap, options) {
+function concatFiles(dirName, pathArray, options) {
     let extension = pathArray[0].split('.').pop() === 'js' ? 'js' : 'css';
     let filename = extension === 'js' ? 'main.js' : 'style.css';
     let jsFile;
@@ -58,7 +63,7 @@ function concatFiles(dirName, pathArray, jsSourceMap, options) {
             jsString += `(function(){${jsFile}}());`;
         });
 
-        jsString = jsMinify(jsString, jsSourceMap)['code'];
+        jsString = jsMinify(jsString, options)['code'];
 
         fs.writeFileSync(`${dirName}/${filename}`, jsString, err => {
             if (err) {
@@ -116,6 +121,8 @@ function templateEngine(file, options) {
 
         if (includes[index]['noTemplate']) {
             template = '';
+        } else if (includes[index]['anotherTemplate']) {
+            template = fs.readFileSync(`${modulePath}/${includes[index]['anotherTemplate']}.html`, 'utf8');
         } else {
             template = fs.readFileSync(`${modulePath}/${html}`, 'utf8');
         }
@@ -159,20 +166,22 @@ function templateEngine(file, options) {
     });
 
     if (options.onePlace && jsFilesPathArr.length) {
-        concatFiles(destination, jsFilesPathArr, options.jsSourceMap);
+        concatFiles(destination, jsFilesPathArr, options);
         jsFilesPath = `${jsInsert.replace(/%s/g, './main.js')}`;
     }
 
     if (options.onePlace && cssFilesPathArr.length) {
-        concatFiles(destination, cssFilesPathArr, null, options);
+        concatFiles(destination, cssFilesPathArr, options);
         cssFilesPath = `${styleInsert.replace(/%s/g, `./style.css`)}`;
     }
 
-    if (options.insert) {
-        modifiedFile = insertBeforeLastOccurrence(modifiedFile, options.insert.css, `${cssFilesPath}\n`);
-        modifiedFile = insertBeforeLastOccurrence(modifiedFile, options.insert.js, `${jsFilesPath}\n`);
-    } else {
+    if (options.inserts) {
+        modifiedFile = insertBeforeLastOccurrence(modifiedFile, options.inserts.css, `${cssFilesPath}`, true);
+        modifiedFile = insertBeforeLastOccurrence(modifiedFile, options.inserts.js, `${jsFilesPath}`, true);
+    } else if (options.insertPlace) {
         modifiedFile = insertBeforeLastOccurrence(modifiedFile, options.insertPlace, `${cssFilesPath}\n${jsFilesPath}\n`);
+    } else {
+        modifiedFile = insertBeforeLastOccurrence(modifiedFile, '</head>', `${cssFilesPath}\n${jsFilesPath}\n`);
     }
 
     return modifiedFile;
