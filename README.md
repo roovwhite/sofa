@@ -1,5 +1,5 @@
 # sofa
-simplified adding CSS and JS from modules to HTML pages using Gulp
+Simplified adding CSS and JS from modules to HTML pages using Gulp
 
 **Structure:**
 
@@ -28,7 +28,7 @@ const sofa = require('gulp-sofa-module');
 function htmlBuild() {
     return gulp.src(path.to.html)
         .pipe(/* Any plugins */)
-        .pipe(sofa({path:'./modules', insert:{'js': '<!--forJS-->', css: '<!--forCSS-->'}}))
+        .pipe(sofa({path:'./modules', inserts:{'js': '<!--forJS-->', css: '<!--forCSS-->'}}))
         .pipe(gulp.dest(path.build))
 }
 ```
