@@ -45,7 +45,7 @@ _insertPlace_ _{String}_ - tag before which links to files (js, css) will be est
 **(if not specified, default is insert before the '<\/head>')**
 
 _inserts_ _{Object}_ - tags, before which links (separately for js and css) to files
-will be set ( example: `sofa({inserts: {'js': '<!--forJS-->', css: '<!--forCSS-->'}` )
+will be set ( example: `sofa({inserts: {js: '<!--forJS-->', css: '<!--forCSS-->'}` )
 **(if not specified, default is insert before the '<\/head>')**
 
 _compress_ _{Boolean}_ - compress files. By default "true".
