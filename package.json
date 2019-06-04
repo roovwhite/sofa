@@ -1,15 +1,20 @@
 {
   "name": "gulp-sofa-module",
-  "version": "1.2.3",
+  "version": "1.3.0",
   "description": "Simplified adding CSS and JS from modules to HTML pages using Gulp",
-  "keywords": ["bundle", "gulp modules"],
+  "keywords": [
+    "bundle",
+    "gulp modules"
+  ],
   "main": "index.js",
   "repository": "https://github.com/roovwhite/sofa.git",
   "author": "roovwhite",
   "license": "MIT",
   "devDependencies": {
     "gulp": "^4.0.0",
+    "gulp-babel": "^8.0.0",
     "gulp-dest": "^0.2.3",
+    "gulp-minify-css": "^1.2.4",
     "gulp-sass": "^4.0.2"
   },
   "dependencies": {

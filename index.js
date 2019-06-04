@@ -147,8 +147,7 @@ function templateEngine(file, options) {
         } else {
 
             if (fs.existsSync(`${modulePath}/${style}`)) {
-                let currentPath = `${modulePath}/style.css`;
-                cssFilesPath += `${styleInsert.replace(/%s/g, currentPath)}\n`;
+                cssFilesPath += `${styleInsert.replace(/%s/g, `${modulePath}/style.css`)}\n`;
             }
 
             if (extra && extra['js']) {
@@ -182,6 +181,17 @@ function templateEngine(file, options) {
         modifiedFile = insertBeforeLastOccurrence(modifiedFile, options.insertPlace, `${cssFilesPath}\n${jsFilesPath}\n`);
     } else {
         modifiedFile = insertBeforeLastOccurrence(modifiedFile, '</head>', `${cssFilesPath}\n${jsFilesPath}\n`);
+    }
+
+    if (modifiedFile && options.onePlace) {
+
+        console.log(filename);
+
+        fs.writeFileSync(`${destination}/${filename}.html`, Buffer.from(modifiedFile), err => {
+            if (err) {
+                return console.error(err);
+            }
+        });
     }
 
     return modifiedFile;

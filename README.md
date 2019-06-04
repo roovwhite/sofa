@@ -1,7 +1,7 @@
 # sofa
-Simplified adding CSS and JS from modules to HTML pages using Gulp
+####Simplified adding CSS and JS from modules to HTML pages using Gulp
 
-**Structure:**
+#### Structure:
 
 ```
 /
@@ -19,7 +19,7 @@ Simplified adding CSS and JS from modules to HTML pages using Gulp
 |- example.html
 ```
 
-**gulp:**
+#### Gulp:
 
 ```
 const gulp = require('gulp');
@@ -32,13 +32,14 @@ function htmlBuild() {
         .pipe(gulp.dest(path.build))
 }
 ```
-**Options for gulp**
+#### Options for gulp
 
-/ **_required fields_** /
+[ **_required fields_** ]
 
-_path_ _{String}_ - path to the directory with modules
+_path_ _{String}_ - path to the directory with modules 
+(**at the same level of nesting files will be connected in html**)
 
-/ **_optional fields_** /
+[ **_optional fields_** ]
 
 _insertPlace_ _{String}_ - tag before which links to files (js, css) will be established
 ( example: `sofa({insertPlace: '</body>'})` )
@@ -53,11 +54,10 @@ _compress_ _{Boolean}_ - compress files. By default "true".
 _jsSourceMap_ _{Boolean}_ - include inline sourcemap in js file. By default "false".
 
 _onePlace_ _{Boolean}_ - put all the module files in one directory with the name of the page.
-By default "false" (**styles - currently only * .scss is supported**) **!required _'dest'_ option**
+**Important, 'gulp.dest' not used for this item**.
+By default "false" (**styles - currently only * .scss is supported**).
 
-_dest_ _{String}_ - destination folder (must match the gulp.dest). For "onePlace".
-
-**index.html**
+#### Index.html
 
 ```
 <!DOCTYPE html>
@@ -75,7 +75,7 @@ _dest_ _{String}_ - destination folder (must match the gulp.dest). For "onePlace
 </body>
 </html>
 ```
-**Options for html**
+#### Options for html
 
 _"module"_ _{String}_ directory name (or folder path)
 
@@ -85,7 +85,7 @@ _noTemplate_: _{Boolean}_ - exclude html templates from processing. By default "
 
 _anotherTemplate_: _{String}_ - html template name instead of default template.
 
-**index.html (transformed)**
+#### Index.html (transformed)
 
 ```
 <html lang="en">
