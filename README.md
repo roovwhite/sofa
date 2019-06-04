@@ -1,5 +1,5 @@
 # sofa
-####Simplified adding CSS and JS from modules to HTML pages using Gulp
+#### Simplified adding CSS and JS from modules to HTML pages using Gulp
 
 #### Structure:
 
