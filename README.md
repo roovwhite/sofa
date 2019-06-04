@@ -53,9 +53,11 @@ _compress_ _{Boolean}_ - compress files. By default "true".
 
 _jsSourceMap_ _{Boolean}_ - include inline sourcemap in js file. By default "false".
 
-_onePlace_ _{Boolean}_ - put all the module files in one directory with the name of the page.
-**Important, 'gulp.dest' not used for this item**.
+_onePlace_ _{Boolean}_ - put all the module files in one directory
+with the name of the page. **Important, 'gulp.dest' not used for this item**.
 By default "false" (**styles - currently only * .scss is supported**).
+
+_dest_ _{String}_ - (for onePlace) directory name or path where the assembly will be stored
 
 #### Index.html
 

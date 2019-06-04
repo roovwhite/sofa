@@ -1,7 +1,6 @@
 const gulp = require('gulp');
-const sass = require('gulp-sass');
 const sofa = require('./index');
-const dest = require('gulp-dest');
+const sass = require('gulp-sass');
 const babel = require('gulp-babel');
 const cssmin = require('gulp-minify-css');
 
@@ -21,13 +20,21 @@ let path = {
 
 function htmlSofaBuild() {
     return gulp.src(path.src.html)
-        .pipe(sofa({ path: './modules', inserts: {'js': '<!--forJS-->', css: '<!--forCSS-->'}}))
+        .pipe(sofa({
+            path: './modules',
+            inserts: {'js': '<!--forJS-->', css: '<!--forCSS-->'}
+        }))
         .pipe(gulp.dest(path.build.html))
 }
 
 function htmlSofaOnePlaceBuild() {
     return gulp.src(path.src.html)
-        .pipe(sofa({ path: './modules', inserts: {'js': '<!--forJS-->', css: '<!--forCSS-->'}, onePlace: true }))
+        .pipe(sofa({
+            path: './modules',
+            inserts: {'js': '<!--forJS-->', css: '<!--forCSS-->'},
+            onePlace: true,
+            dest: 'build/'
+        }))
 }
 
 function cssModulesBuild() {

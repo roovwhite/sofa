@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const sass = require('sass');
 const postcss = require('postcss');
 const through = require('through2').obj;
@@ -47,14 +48,34 @@ function jsMinify(doc, options) {
     });
 }
 
+function checkDest(dest) {
+    let destination = dest;
+
+    if (destination.slice(-1) !== '/') {
+        destination += '/';
+    }
+
+    return destination;
+}
+
 function concatFiles(dirName, pathArray, options) {
     let extension = pathArray[0].split('.').pop() === 'js' ? 'js' : 'css';
     let filename = extension === 'js' ? 'main.js' : 'style.css';
-    let jsFile;
+    let sep = path.sep;
+    let initDir = path.isAbsolute(dirName) ? sep : '';
     let jsString = '';
+    let jsFile;
 
     if (!fs.existsSync(dirName)) {
-        fs.mkdirSync(dirName);
+        dirName.split(sep).reduce((parentDir, childDir) => {
+            let curDir = path.resolve(parentDir, childDir);
+
+            if (!fs.existsSync(curDir)) {
+                fs.mkdirSync(curDir);
+            }
+
+            return curDir;
+        }, initDir);
     }
 
     if (extension === 'js') {
@@ -102,7 +123,7 @@ function templateEngine(file, options) {
     let jsFilesPath = '';
     let cssFilesPathArr = [];
     let jsFilesPathArr = [];
-    let destination = options.dest ? `${options.dest}${filename}` : filename;
+    let destinationFolder = options.dest ? `${checkDest(options.dest)}${filename}` : filename;
 
     if (!array || !array.length) return;
 
@@ -165,12 +186,12 @@ function templateEngine(file, options) {
     });
 
     if (options.onePlace && jsFilesPathArr.length) {
-        concatFiles(destination, jsFilesPathArr, options);
+        concatFiles(destinationFolder, jsFilesPathArr, options);
         jsFilesPath = `${jsInsert.replace(/%s/g, './main.js')}`;
     }
 
     if (options.onePlace && cssFilesPathArr.length) {
-        concatFiles(destination, cssFilesPathArr, options);
+        concatFiles(destinationFolder, cssFilesPathArr, options);
         cssFilesPath = `${styleInsert.replace(/%s/g, `./style.css`)}`;
     }
 
@@ -184,10 +205,7 @@ function templateEngine(file, options) {
     }
 
     if (modifiedFile && options.onePlace) {
-
-        console.log(filename);
-
-        fs.writeFileSync(`${destination}/${filename}.html`, Buffer.from(modifiedFile), err => {
+        fs.writeFileSync(`${destinationFolder}/index.html`, Buffer.from(modifiedFile), err => {
             if (err) {
                 return console.error(err);
             }
