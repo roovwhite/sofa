@@ -1,5 +1,5 @@
 # sofa
-####Simplified adding CSS and JS from modules to HTML pages using Gulp
+#### Simplified adding CSS and JS from modules to HTML pages using Gulp
 
 #### Structure:
 
@@ -40,6 +40,9 @@ _path_ _{String}_ - path to the directory with modules
 (**at the same level of nesting files will be connected in html**)
 
 [ **_optional fields_** ]
+
+_pathBuild_ _{String}_ - different from the **"path"** parameter, specified if necessary
+for connecting files to html (by default is taken from the **"path"**)
 
 _insertPlace_ _{String}_ - tag before which links to files (js, css) will be established
 ( example: `sofa({insertPlace: '</body>'})` )

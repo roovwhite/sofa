@@ -138,6 +138,7 @@ function templateEngine(file, options) {
 
     array.forEach( (item, index) => {
         let modulePath = `${options.path}/${includes[index]['module']}`;
+        let pathBuild = options.pathBuild ? `${options.pathBuild}/${includes[index]['module']}` : `${options.path}/${includes[index]['module']}`;
         let extra = includes[index]['extra'];
 
         if (includes[index]['noTemplate']) {
@@ -168,18 +169,18 @@ function templateEngine(file, options) {
         } else {
 
             if (fs.existsSync(`${modulePath}/${style}`)) {
-                cssFilesPath += `${styleInsert.replace(/%s/g, `${modulePath}/style.css`)}\n`;
+                cssFilesPath += `${styleInsert.replace(/%s/g, `${pathBuild}/style.css`)}\n`;
             }
 
             if (extra && extra['js']) {
                 extra['js'].forEach( jsItem => {
-                    jsFilesPath += `${jsInsert.replace(/%s/g, `${modulePath}/${jsItem}.js`)}\n`;
+                    jsFilesPath += `${jsInsert.replace(/%s/g, `${pathBuild}/${jsItem}.js`)}\n`;
                 });
             }
 
             if (extra && extra['css']) {
                 extra['css'].forEach( cssItem => {
-                    cssFilesPath += `${styleInsert.replace(/%s/g, `${modulePath}/${cssItem}.css`)}\n`;
+                    cssFilesPath += `${styleInsert.replace(/%s/g, `${pathBuild}/${cssItem}.css`)}\n`;
                 });
             }
         }
