@@ -1,6 +1,6 @@
 {
   "name": "gulp-sofa-module",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "Simplified adding CSS and JS from modules to HTML pages using Gulp",
   "keywords": [
     "bundle",
